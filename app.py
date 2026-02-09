@@ -139,9 +139,18 @@ def generate_summary():
 def download_file(filename):
     """Download generated notes"""
     try:
-        filepath = os.path.join(Config.NOTES_DIR, filename)
-        if os.path.exists(filepath):
-            return send_file(filepath, as_attachment=True)
+        # Sanitize filename to prevent path traversal
+        safe_name = os.path.basename(filename)
+        filepath = os.path.join(Config.NOTES_DIR, safe_name)
+        abs_filepath = os.path.realpath(filepath)
+        abs_notes_dir = os.path.realpath(Config.NOTES_DIR)
+
+        # Ensure the resolved path is a file within NOTES_DIR
+        if not abs_filepath.startswith(abs_notes_dir + os.sep):
+            return jsonify({'error': 'Access denied'}), 403
+
+        if os.path.isfile(abs_filepath):
+            return send_file(abs_filepath, as_attachment=True)
         else:
             return jsonify({'error': 'File not found'}), 404
     except Exception as e:

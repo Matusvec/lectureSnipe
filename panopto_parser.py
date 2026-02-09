@@ -55,8 +55,10 @@ class PanoptoParser:
             str: Server domain (e.g., 'university.hosted.panopto.com')
         """
         try:
+            if not url:
+                return None
             parsed = urlparse(url)
-            return parsed.netloc
+            return parsed.netloc or None
         except Exception as e:
             print(f"Error extracting server: {e}")
             return None

@@ -171,12 +171,17 @@ class LectureProcessor:
         }
         
         try:
+            # Validate URL
+            if not PanoptoParser.is_valid_panopto_url(panopto_url):
+                result['error'] = "Invalid Panopto URL"
+                return result
+
             # Get session info
             session_id = PanoptoParser.extract_session_id(panopto_url)
             server = PanoptoParser.extract_server(panopto_url)
             
             if not session_id or not server:
-                result['error'] = "Invalid URL"
+                result['error'] = "Could not extract session information from URL"
                 return result
             
             # Get and filter transcript

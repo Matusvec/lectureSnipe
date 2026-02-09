@@ -52,3 +52,9 @@ output/
 # OS
 .DS_Store
 Thumbs.db
+
+# Ruby / Rails
+frontend/tmp/
+frontend/log/
+frontend/vendor/bundle/
+frontend/.bundle/
