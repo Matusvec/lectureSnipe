@@ -145,11 +145,11 @@ def download_file(filename):
         abs_filepath = os.path.realpath(filepath)
         abs_notes_dir = os.path.realpath(Config.NOTES_DIR)
 
-        # Ensure the resolved path is within NOTES_DIR
-        if not abs_filepath.startswith(abs_notes_dir + os.sep) and abs_filepath != abs_notes_dir:
+        # Ensure the resolved path is a file within NOTES_DIR
+        if not abs_filepath.startswith(abs_notes_dir + os.sep):
             return jsonify({'error': 'Access denied'}), 403
 
-        if os.path.exists(abs_filepath):
+        if os.path.isfile(abs_filepath):
             return send_file(abs_filepath, as_attachment=True)
         else:
             return jsonify({'error': 'File not found'}), 404
