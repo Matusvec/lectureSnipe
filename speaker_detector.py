@@ -127,7 +127,7 @@ class SpeakerDetector:
             include_students (bool): Whether to include student questions
             
         Returns:
-            list: Filtered transcript entries
+            list: Filtered transcript entries (copies with 'speaker' key added)
         """
         filtered = []
         previous_speaker = None
@@ -142,18 +142,21 @@ class SpeakerDetector:
                 continue
             
             if speaker == 'professor':
-                entry['speaker'] = 'professor'
-                filtered.append(entry)
+                filtered_entry = dict(entry)
+                filtered_entry['speaker'] = 'professor'
+                filtered.append(filtered_entry)
                 previous_speaker = 'professor'
             elif speaker == 'student' and include_students:
-                entry['speaker'] = 'student'
-                filtered.append(entry)
+                filtered_entry = dict(entry)
+                filtered_entry['speaker'] = 'student'
+                filtered.append(filtered_entry)
                 previous_speaker = 'student'
             elif speaker == 'unknown':
                 # Include unknown segments if previous was professor
                 if previous_speaker == 'professor':
-                    entry['speaker'] = 'professor'  # Likely continuation
-                    filtered.append(entry)
+                    filtered_entry = dict(entry)
+                    filtered_entry['speaker'] = 'professor'  # Likely continuation
+                    filtered.append(filtered_entry)
         
         return filtered
     

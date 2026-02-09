@@ -305,17 +305,19 @@ class TestSpeakerDetectorFilter(unittest.TestCase):
         filtered = self.detector.filter_transcript(noise_only, include_students=True)
         self.assertEqual(len(filtered), 0)
 
-    def test_mutates_original_entries(self):
-        """BUG: filter_transcript mutates the original transcript dicts by adding 'speaker' key.
-        This is a side effect that could cause issues if the same transcript
-        is filtered multiple times with different settings."""
+    def test_does_not_mutate_original_entries(self):
+        """FIXED: filter_transcript should not mutate the original transcript dicts."""
         transcript = [
             {"text": "Therefore, today we discuss algorithms.", "start": "00:00:00"},
         ]
-        # First filter
-        self.detector.filter_transcript(transcript, include_students=False)
-        # The original dict now has 'speaker' key added
-        self.assertIn("speaker", transcript[0])
+        # Before filtering, no 'speaker' key
+        self.assertNotIn("speaker", transcript[0])
+        # Filter
+        result = self.detector.filter_transcript(transcript, include_students=False)
+        # Original dict should NOT have 'speaker' key (no mutation)
+        self.assertNotIn("speaker", transcript[0])
+        # But the returned entry should
+        self.assertIn("speaker", result[0])
 
     def test_unknown_speaker_continuation(self):
         """Unknown segments after professor are treated as professor continuation"""
@@ -1241,10 +1243,8 @@ class TestEdgeCases(unittest.TestCase):
 class TestBugDiscovery(unittest.TestCase):
     """Tests that document known bugs and edge case issues"""
 
-    def test_filter_transcript_mutates_input(self):
-        """BUG: filter_transcript adds 'speaker' key to the original dict objects.
-        This means the same transcript can't be filtered twice with different settings
-        without the first filter's speaker assignments leaking into the second."""
+    def test_filter_transcript_no_mutation(self):
+        """FIXED: filter_transcript no longer mutates original dict objects."""
         detector = SpeakerDetector()
         transcript = [
             {"text": "Therefore, algorithms are important.", "start": "00:00:00"},
@@ -1253,12 +1253,13 @@ class TestBugDiscovery(unittest.TestCase):
         # Before filtering, no 'speaker' key
         self.assertNotIn("speaker", transcript[0])
 
-        # First filter
-        detector.filter_transcript(transcript, include_students=False)
+        # Filter
+        result = detector.filter_transcript(transcript, include_students=False)
 
-        # After filtering, 'speaker' key has been added to original dict
-        self.assertIn("speaker", transcript[0])
-        # This is a mutation side effect — documented as a known issue
+        # After filtering, original dict should NOT have 'speaker' key
+        self.assertNotIn("speaker", transcript[0])
+        # The returned copy should have it
+        self.assertIn("speaker", result[0])
 
     def test_vtt_parser_handles_numbered_cues(self):
         """VTT files often have numbered cues before timestamps.
