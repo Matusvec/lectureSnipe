@@ -1,0 +1,77 @@
+<% content_for(:title) { "LectureSnipe — Results" } %>
+
+<section class="result-section">
+  <div class="card result-card">
+    <% if @success %>
+      <div class="result-header success-header">
+        <div class="result-icon-wrapper success-icon-wrapper">
+          <span class="result-icon">&#x2713;</span>
+        </div>
+        <h2 class="result-title">Success!</h2>
+        <p class="result-subtitle">Your lecture has been processed successfully</p>
+      </div>
+
+      <div class="result-body">
+        <% if @summary_text %>
+          <!-- Summary Result -->
+          <div class="summary-card">
+            <h3 class="summary-title">&#x1F4DD; Lecture Summary</h3>
+            <div class="summary-content">
+              <%= simple_format(@summary_text) %>
+            </div>
+          </div>
+        <% else %>
+          <!-- Full Notes Result -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-card-icon">&#x1F4DC;</span>
+              <span class="stat-card-value"><%= @stats&.dig("transcript_entries") || 0 %></span>
+              <span class="stat-card-label">Transcript Entries</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-icon">&#x1F5BC;&#xFE0F;</span>
+              <span class="stat-card-value"><%= @stats&.dig("slides_downloaded") || 0 %></span>
+              <span class="stat-card-label">Slides Downloaded</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-icon">&#x1F3AF;</span>
+              <span class="stat-card-value"><%= @session_id&.truncate(12) || "N/A" %></span>
+              <span class="stat-card-label">Session ID</span>
+            </div>
+          </div>
+
+          <% if @notes_path %>
+            <div class="download-section">
+              <p class="download-text">Your notes are ready for download:</p>
+              <a href="<%= @notes_path %>" class="btn btn-success btn-lg" download>
+                <span class="btn-icon">&#x1F4E5;</span>
+                Download Notes
+              </a>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="result-header error-header">
+        <div class="result-icon-wrapper error-icon-wrapper">
+          <span class="result-icon">&#x2717;</span>
+        </div>
+        <h2 class="result-title">Something went wrong</h2>
+        <p class="result-subtitle">We couldn't process your lecture</p>
+      </div>
+
+      <div class="result-body">
+        <div class="error-card">
+          <p class="error-message"><%= @error %></p>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="result-actions">
+      <a href="/" class="btn btn-primary btn-lg">
+        <span class="btn-icon">&#x2190;</span>
+        Process Another Lecture
+      </a>
+    </div>
+  </div>
+</section>

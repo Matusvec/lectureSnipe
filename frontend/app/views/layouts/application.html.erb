@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title><%= content_for(:title) || "LectureSnipe" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="LectureSnipe">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Convert Panopto lectures into beautiful, readable notes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app %>
+  </head>
+
+  <body>
+    <div class="page-bg"></div>
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+    </div>
+
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="/" class="nav-brand">
+          <span class="nav-icon">&#x1F3AF;</span>
+          <span class="nav-title">LectureSnipe</span>
+        </a>
+        <div class="nav-links">
+          <a href="/" class="nav-link active">Home</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#how-it-works" class="nav-link">How It Works</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <%= yield %>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-icon">&#x1F3AF;</span>
+          <span>LectureSnipe</span>
+        </div>
+        <p class="footer-text">Transform your lectures into perfect notes.</p>
+        <p class="footer-copyright">&copy; <%= Date.today.year %> LectureSnipe. Built with Ruby on Rails.</p>
+      </div>
+    </footer>
+  </body>
+</html>
